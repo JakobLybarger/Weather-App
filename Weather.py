@@ -3,12 +3,10 @@
 import requests
 from kivy.app import App
 from kivy.properties import ObjectProperty
-from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.gridlayout import GridLayout
 from kivy.uix.label import Label
 from kivy.uix.popup import Popup
-from kivy.uix.screenmanager import ScreenManager, Screen
-from kivy.uix.floatlayout import FloatLayout
+from kivy.uix.screenmanager import Screen
 
 
 def get_weather(find_city):
@@ -28,7 +26,6 @@ def get_weather(find_city):
 
         # concatenating final url, requesting and getting json file
         final_url = url + city + "&appid=" + api_key
-        print(final_url)
         response = requests.get(final_url)
         x = response.json()
 
@@ -64,11 +61,11 @@ def get_weather(find_city):
         daily_low_fahrenheit = (daily_low_kelvin - 273.15) * (9 / 5) + 32
         data.append(daily_low_fahrenheit)
 
-        print("===================================")
-        print(
-            "\nCondition: %s\nHumidity: %d\n\nCurrent Temp: %.1f°F\nReal Feel: %.1f°F\n\nLow: %.1f°F\nHigh: %.1f°F\n" %
-            (weather, humidity, temp_fahrenheit, real_feel_fahrenheit, daily_low_fahrenheit, daily_high_fahrenheit))
-        print("===================================")
+        #print("===================================")
+        #print(
+         #   "\nCondition: %s\nHumidity: %d\n\nCurrent Temp: %.1f°F\nReal Feel: %.1f°F\n\nLow: %.1f°F\nHigh: %.1f°F\n" %
+          #  (weather, humidity, temp_fahrenheit, real_feel_fahrenheit, daily_low_fahrenheit, daily_high_fahrenheit))
+        #print("===================================")
 
         return data
 
@@ -86,12 +83,7 @@ class FindWeatherWindow(Screen):
         weather_data = get_weather(self.city.text)
         show_popup(weather_data)
 
-
-class WindowManager(ScreenManager):
-    city = ObjectProperty(None)
-
-
-class Pop(FloatLayout):
+class MyLabel(Label):
     pass
 
 
@@ -101,26 +93,36 @@ class MyApp(App):
 
 
 def show_popup(data):
-    show = Pop()
-    print(data)
-    popup = Popup(title="Weather", size_hint=(None, None), size=(400, 400))
+    # The popup which will show on the screen
+    popup = Popup(title=data[0] + " Weather", title_align="center", title_size=25, size_hint=(None, None), size=(400, 400))
+    # Grid layout on which all the labels will appear
     layout = GridLayout(rows=7)
-    popup_label1 = Label(text="City: " + data[0], font_size=25, text_size=popup.size)
-    popup_label2 = Label(text="Condition: " + data[1], font_size=25, text_size=popup.size)
-    popup_label3 = Label(text="Humidity: " + str(data[2]), font_size=25, text_size=popup.size)
-    popup_label4 = Label(text="Current Temperature: " + str(int(data[3])), font_size=25, text_size=popup.size)
-    popup_label5 = Label(text="Feels Like: " + str(int(data[4])), font_size=25, text_size=popup.size)
-    popup_label6 = Label(text="High: " + str(int(data[5])), font_size=25, text_size=popup.size)
-    popup_label7 = Label(text="Low: " + str(int(data[6])), font_size=25, text_size=popup.size)
-    layout.add_widget(popup_label1)
+    # All the labels that will be in the grid
+    popup_label1 = MyLabel(text="City: " + data[0], font_size=25, text_size=popup.size)
+    popup_label2 = MyLabel(text="Condition: " + data[1], font_size=25, text_size=popup.size)
+    popup_label3 = MyLabel(text="Humidity: " + str(data[2]), font_size=25, text_size=popup.size)
+    popup_label4 = MyLabel(text="Current Temperature: " + str(int(data[3])), font_size=25, text_size=popup.size)
+    popup_label5 = MyLabel(text="Feels Like: " + str(int(data[4])), font_size=25, text_size=popup.size)
+    popup_label6 = MyLabel(text="High: " + str(int(data[5])), font_size=25, text_size=popup.size)
+    popup_label7 = MyLabel(text="Low: " + str(int(data[6])), font_size=25, text_size=popup.size)
+
+    # The adding of each label tot he grid
+    #layout.add_widget(popup_label1)
     layout.add_widget(popup_label2)
     layout.add_widget(popup_label3)
     layout.add_widget(popup_label4)
     layout.add_widget(popup_label5)
     layout.add_widget(popup_label6)
     layout.add_widget(popup_label7)
-    popup.content = layout
 
+    # Adding the GridLayout to the popup
+    popup.content = layout
+    # Opening the popup
+    popup.open()
+
+
+def invalid_city():
+    popup = Popup(title="Error",text="Invalid city... Please try again", size_hint=(None, None), size=(200, 200))
     popup.open()
 
 
