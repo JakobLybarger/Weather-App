@@ -1,0 +1,31 @@
+<FindWeatherWindow>:
+
+    city: city
+
+    FloatLayout:
+        Label:
+            text: "Enter city name: "
+            size_hint: 0.2, 0.2
+            pos_hint: {"right": 0.55, "top": 0.65}
+            font_size: root.width / 7**2
+        TextInput:
+            id: city
+            size_hint: 0.15, 0.05
+            pos_hint: {"right": 0.7, "top": 0.575}
+            font_size: root.width / 7**2
+        Button:
+            text: "Get Weather Data"
+            size_hint: 0.18, 0.06
+            pos_hint: {"right":0.6, "top":0.5}
+            font_size: root.width / 7**2
+
+            on_release:
+                root.find_weather()
+                city.text = ""
+
+
+
+<Label>:
+    text_size: self.width, None
+    size_hint: 1, None
+    height: self.texture_size[1]
